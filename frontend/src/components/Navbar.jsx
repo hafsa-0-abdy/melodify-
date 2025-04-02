@@ -15,6 +15,8 @@ const Navbar = () => {
         <Link to="/" className="hover:text-violet-400">Home</Link>
         <Link to="/now-playing" className="hover:text-violet-400">Now Playing</Link>
         <Link to="/library" className="hover:text-violet-400">Library</Link>
+        <Link to="/add" className="hover:text-violet-400">Add Song</Link>
+
         <span className="text-zinc-400 mx-2">Hi, {username} 👋</span>
         <button onClick={handleLogout} className="hover:text-red-400 text-sm">Logout</button>
       </nav>
