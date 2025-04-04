@@ -33,32 +33,31 @@ const AddSong = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 flex flex-col items-center justify-center px-4 py-8 text-white">
-      <form onSubmit={handleSubmit} className="bg-zinc-800 p-6 w-full max-w-xl rounded-2xl shadow-xl">
-        <h2 className="text-3xl font-bold mb-6 text-center">🎵 Add a New Track</h2>
+    <div className="min-h-screen bg-zinc-900 text-white flex justify-center items-center px-4 py-10">
+      <form onSubmit={handleSubmit} className="bg-zinc-800 p-8 rounded-2xl shadow-lg w-full max-w-md space-y-6">
+        <h2 className="text-3xl font-bold text-center">Add New Song 🎶</h2>
 
         {['title', 'artist', 'image', 'audio'].map((field) => (
-          <div key={field} className="mb-4">
-            <label className="block text-sm text-zinc-300 mb-1 capitalize">{field}</label>
+          <div key={field}>
+            <label className="block text-sm mb-1 capitalize">{field}</label>
             <input
               type="text"
               name={field}
               value={form[field]}
               onChange={handleChange}
-              placeholder={`Enter ${field}...`}
-              className="w-full p-2 rounded bg-zinc-700 placeholder:text-zinc-500"
+              className="w-full p-2 rounded bg-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
               required
             />
           </div>
         ))}
 
-        <div className="mb-6">
-          <label className="block text-sm text-zinc-300 mb-1">Mood</label>
+        <div>
+          <label className="block text-sm mb-1">Mood</label>
           <select
             name="mood"
             value={form.mood}
             onChange={handleChange}
-            className="w-full p-2 rounded bg-zinc-700 text-white"
+            className="w-full p-2 rounded bg-zinc-700 text-white focus:outline-none focus:ring-2 focus:ring-violet-500"
             required
           >
             <option value="">Select a mood</option>
@@ -70,9 +69,9 @@ const AddSong = () => {
 
         <button
           type="submit"
-          className="w-full py-2 bg-violet-600 hover:bg-violet-700 rounded font-medium"
+          className="w-full py-2 bg-violet-600 hover:bg-violet-700 rounded text-center font-semibold"
         >
-          Add Song
+          Upload Song
         </button>
       </form>
     </div>

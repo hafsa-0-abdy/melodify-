@@ -1,13 +1,14 @@
 from flask_sqlalchemy import SQLAlchemy
 
+# Initialize db (to be used in app.py)
 db = SQLAlchemy()
 
 class Song(db.Model):
     id = db.Column(db.Integer, primary_key=True)
     title = db.Column(db.String(100), nullable=False)
     artist = db.Column(db.String(100), nullable=False)
-    image = db.Column(db.String(200))
-    audio = db.Column(db.String(200))
+    image = db.Column(db.String(200))  # Real image URL here
+    audio = db.Column(db.String(200))  # Real audio file URL here
     mood = db.Column(db.String(50))
 
 class Comment(db.Model):
