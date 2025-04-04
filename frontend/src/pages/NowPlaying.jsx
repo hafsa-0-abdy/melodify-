@@ -89,85 +89,91 @@ const NowPlaying = () => {
   if (!currentSong) return null;
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-white flex flex-col items-center justify-center p-4">
-      <h2 className="text-2xl font-bold mb-4">Now Playing</h2>
-      <img
-        src={currentSong.image}
-        alt={currentSong.title}
-        className="w-64 h-64 object-cover rounded-xl shadow-lg mb-4"
-      />
-      <h3 className="text-xl">{currentSong.title}</h3>
-      <p className="text-zinc-400 mb-4">{currentSong.artist}</p>
-      {currentSong.mood && (
-        <p className="text-sm text-emerald-400 mb-2">{currentSong.mood}</p>
-      )}
+    <div className="min-h-screen bg-zinc-900 text-white px-4 py-8 flex flex-col items-center">
+      <div className="max-w-3xl w-full text-center">
+        <h2 className="text-3xl font-bold mb-6">Now Playing</h2>
 
-      <audio
-        ref={audioRef}
-        src={currentSong.audio}
-        onEnded={handleEnded}
-        onTimeUpdate={handleTimeUpdate}
-        onLoadedMetadata={handleLoadedMetadata}
-      />
+        <div className="flex flex-col items-center gap-4">
+          <img
+            src={currentSong.image}
+            alt={currentSong.title}
+            className="w-60 h-60 rounded-2xl object-cover shadow-xl"
+          />
+          <div>
+            <h3 className="text-xl font-semibold">{currentSong.title}</h3>
+            <p className="text-zinc-400 text-sm">{currentSong.artist}</p>
+            {currentSong.mood && (
+              <span className="text-xs text-emerald-400">#{currentSong.mood}</span>
+            )}
+          </div>
+        </div>
 
-      {/* Playback controls */}
-      <div className="flex items-center gap-6 mt-4">
-        <button onClick={handlePrev} className="text-xl hover:text-violet-400">
-          <FaBackward />
-        </button>
+        <audio
+          ref={audioRef}
+          src={currentSong.audio}
+          onEnded={handleEnded}
+          onTimeUpdate={handleTimeUpdate}
+          onLoadedMetadata={handleLoadedMetadata}
+        />
 
-        <button
-          onClick={() => setIsPlaying(!isPlaying)}
-          className="text-3xl bg-violet-600 hover:bg-violet-700 rounded-full px-4 py-2"
-        >
-          {isPlaying ? <FaPause /> : <FaPlay />}
-        </button>
+        <div className="mt-6 flex items-center justify-center gap-6">
+          <button onClick={handlePrev} className="text-xl hover:text-violet-400">
+            <FaBackward />
+          </button>
 
-        <button onClick={handleNext} className="text-xl hover:text-violet-400">
-          <FaForward />
-        </button>
+          <button
+            onClick={() => setIsPlaying(!isPlaying)}
+            className="text-3xl bg-violet-600 hover:bg-violet-700 px-5 py-2 rounded-full"
+          >
+            {isPlaying ? <FaPause /> : <FaPlay />}
+          </button>
 
-        <button
-          onClick={() => setRepeat(!repeat)}
-          className={`text-sm ${repeat ? 'text-green-400' : 'text-zinc-500'}`}
-        >
-          <FaRedo />
-        </button>
-      </div>
+          <button onClick={handleNext} className="text-xl hover:text-violet-400">
+            <FaForward />
+          </button>
 
-      {/* Real-time progress bar */}
-      <div className="mt-4 w-full max-w-lg">
-        <div
-          className="bg-zinc-700 h-2 w-full rounded cursor-pointer"
-          onClick={handleScrub}
-        >
+          <button
+            onClick={() => setRepeat(!repeat)}
+            className={`text-sm ${repeat ? 'text-green-400' : 'text-zinc-500'}`}
+          >
+            <FaRedo />
+          </button>
+        </div>
+
+        <div className="mt-4 w-full max-w-lg mx-auto">
           <div
-            className="bg-violet-500 h-2 rounded"
-            style={{ width: `${(currentTime / duration) * 100}%` }}
+            className="bg-zinc-700 h-2 rounded cursor-pointer"
+            onClick={handleScrub}
+          >
+            <div
+              className="bg-violet-500 h-2 rounded"
+              style={{ width: `${(currentTime / duration) * 100}%` }}
+            />
+          </div>
+          <div className="flex justify-between text-xs text-zinc-400 mt-1">
+            <span>{formatTime(currentTime)}</span>
+            <span>{formatTime(duration)}</span>
+          </div>
+        </div>
+
+        <div className="mt-4 flex items-center justify-center gap-3">
+          <span className="text-xs text-zinc-400">Volume</span>
+          <input
+            type="range"
+            min="0"
+            max="1"
+            step="0.01"
+            value={volume}
+            onChange={(e) => setVolume(parseFloat(e.target.value))}
+            className="w-40"
           />
         </div>
-        <div className="flex justify-between text-xs text-zinc-400 mt-1">
-          <span>{formatTime(currentTime)}</span>
-          <span>{formatTime(duration)}</span>
+
+        {/* Comments Section */}
+        <div className="mt-10">
+          {currentSong?.id && <CommentSection songId={currentSong.id} />}
         </div>
       </div>
-
-      {/* Volume slider */}
-      <div className="mt-4 flex items-center gap-2">
-        <span className="text-xs text-zinc-400">Volume</span>
-        <input
-          type="range"
-          min="0"
-          max="1"
-          step="0.01"
-          value={volume}
-          onChange={(e) => setVolume(parseFloat(e.target.value))}
-          className="w-40"
-        />
-      </div>
-
-      {/* 💬 Comments Section */}
-      {currentSong?.id && <CommentSection songId={currentSong.id} />}
     </div>
   );
 };

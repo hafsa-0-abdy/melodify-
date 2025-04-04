@@ -1,3 +1,4 @@
+// ✅ Updated MusicContext with inProgress support
 import { createContext, useState, useContext } from 'react';
 
 const MusicContext = createContext();
@@ -8,13 +9,11 @@ export const MusicProvider = ({ children }) => {
   const [recentlyPlayed, setRecentlyPlayed] = useState([]);
   const [likedSongs, setLikedSongs] = useState([]);
   const [repeat, setRepeat] = useState(false);
+  const [inProgress, setInProgress] = useState([]);
 
-  // ✅ Play selected song + save to recently played
   const playSong = (song, index = 0) => {
     setCurrentSong(song);
     setCurrentIndex(index);
-
-    // Add to recently played (without duplicates)
     setRecentlyPlayed((prev) => {
       const alreadyExists = prev.some((s) => s.id === song.id);
       if (alreadyExists) return prev;
@@ -22,10 +21,15 @@ export const MusicProvider = ({ children }) => {
     });
   };
 
-  // ✅ Like a song
   const likeSong = (song) => {
     if (!likedSongs.some((s) => s.id === song.id)) {
       setLikedSongs((prev) => [...prev, song]);
+    }
+  };
+
+  const markInProgress = (song) => {
+    if (!inProgress.find((s) => s.id === song.id)) {
+      setInProgress((prev) => [...prev, song]);
     }
   };
 
@@ -40,9 +44,11 @@ export const MusicProvider = ({ children }) => {
         setRecentlyPlayed,
         likedSongs,
         likeSong,
-        playSong,     // ✅ export playSong
+        playSong,
         repeat,
         setRepeat,
+        inProgress,
+        markInProgress
       }}
     >
       {children}

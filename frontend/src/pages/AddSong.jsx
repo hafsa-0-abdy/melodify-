@@ -33,31 +33,33 @@ const AddSong = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 text-white flex justify-center items-center px-4">
-      <form onSubmit={handleSubmit} className="bg-zinc-800 p-6 rounded-xl shadow-lg w-full max-w-md">
-        <h2 className="text-2xl font-bold mb-4">Add a New Song 🎶</h2>
+    <div className="min-h-screen bg-zinc-900 flex flex-col items-center justify-center px-4 py-8 text-white">
+      <form onSubmit={handleSubmit} className="bg-zinc-800 p-6 w-full max-w-xl rounded-2xl shadow-xl">
+        <h2 className="text-3xl font-bold mb-6 text-center">🎵 Add a New Track</h2>
 
         {['title', 'artist', 'image', 'audio'].map((field) => (
           <div key={field} className="mb-4">
-            <label className="block text-sm mb-1 capitalize">{field}</label>
+            <label className="block text-sm text-zinc-300 mb-1 capitalize">{field}</label>
             <input
               type="text"
               name={field}
               value={form[field]}
               onChange={handleChange}
-              className="w-full p-2 rounded bg-zinc-700 text-white"
+              placeholder={`Enter ${field}...`}
+              className="w-full p-2 rounded bg-zinc-700 placeholder:text-zinc-500"
               required
             />
           </div>
         ))}
 
-        <div className="mb-4">
-          <label className="block text-sm mb-1">Mood</label>
+        <div className="mb-6">
+          <label className="block text-sm text-zinc-300 mb-1">Mood</label>
           <select
             name="mood"
             value={form.mood}
             onChange={handleChange}
             className="w-full p-2 rounded bg-zinc-700 text-white"
+            required
           >
             <option value="">Select a mood</option>
             {moods.map((mood, index) => (

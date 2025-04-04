@@ -6,80 +6,41 @@ import { useNavigate } from 'react-router-dom';
 import { motion } from 'framer-motion';
 
 const Home = () => {
-  const { playSong, likeSong, recentlyPlayed } = useMusic();
+  const { playSong, likeSong } = useMusic();
   const navigate = useNavigate();
   const [songs, setSongs] = useState([]);
   const [searchTerm, setSearchTerm] = useState('');
   const username = localStorage.getItem('melodifyUser');
 
   useEffect(() => {
-    axios
-      .get('http://127.0.0.1:5000/songs')
-      .then((res) => {
-        setSongs(res.data);
-      })
-      .catch((err) => {
-        console.error("Backend error:", err);
-      });
+    axios.get('http://127.0.0.1:5000/songs')
+      .then(res => setSongs(res.data))
+      .catch(err => console.error("Backend error:", err));
   }, []);
 
   const handleClick = (song, index) => {
-    console.log('🎵 playing:', song.title);
     playSong(song, index);
     navigate('/now-playing');
   };
 
-  const filteredSongs = songs.filter((song) =>
+  const filteredSongs = songs.filter(song =>
     `${song.title} ${song.artist}`.toLowerCase().includes(searchTerm.toLowerCase())
   );
 
-  return (
-    <div className="p-4 text-white">
-      <h2 className="text-2xl font-semibold mb-4">
-        Recommended for {username || "You"} 🎧
-      </h2>
+  const renderSection = (title, filter) => {
+    const filtered = filteredSongs.filter(filter);
+    if (filtered.length === 0) return null;
 
-      {recentlyPlayed.length > 0 && (
-        <div className="mb-6">
-          <h3 className="text-lg text-zinc-300 mb-2">Recently Played</h3>
-          <div className="flex overflow-x-auto gap-4">
-            {recentlyPlayed.map((song, index) => (
-              <div
-                key={index}
-                onClick={() => handleClick(song, index)}
-                className="min-w-[150px] cursor-pointer"
-              >
-                <MusicCard {...song} />
-              </div>
-            ))}
-          </div>
-        </div>
-      )}
-
-      <input
-        type="text"
-        placeholder="Search songs or artists..."
-        value={searchTerm}
-        onChange={(e) => setSearchTerm(e.target.value)}
-        className="w-full md:w-1/2 p-2 mb-4 rounded bg-zinc-800 text-white placeholder:text-zinc-500"
-      />
-
-      {searchTerm && (
-        <p className="mb-2 text-zinc-400 italic">
-          Showing results for: <span className="text-white">"{searchTerm}"</span>
-        </p>
-      )}
-
-      {filteredSongs.length === 0 ? (
-        <p className="text-zinc-400">No songs match your search 😢</p>
-      ) : (
+    return (
+      <div className="mb-8">
+        <h3 className="text-xl font-semibold mb-3">{title}</h3>
         <div className="grid grid-cols-2 sm:grid-cols-3 md:grid-cols-4 gap-4">
-          {filteredSongs.map((song, index) => (
+          {filtered.map((song, index) => (
             <motion.div
               key={index}
               className="relative group"
-              initial={{ opacity: 0, scale: 0.9 }}
-              animate={{ opacity: 1, scale: 1 }}
+              initial={{ opacity: 0, y: 20 }}
+              animate={{ opacity: 1, y: 0 }}
               transition={{ duration: 0.3, delay: index * 0.05 }}
             >
               <div onClick={() => handleClick(song, index)}>
@@ -99,6 +60,30 @@ const Home = () => {
             </motion.div>
           ))}
         </div>
+      </div>
+    );
+  };
+
+  return (
+    <div className="p-4 text-white">
+      <h2 className="text-2xl font-semibold mb-6">
+        Welcome back, {username || "Melodify user"} 🎧
+      </h2>
+
+      <input
+        type="text"
+        placeholder="Search songs or artists..."
+        value={searchTerm}
+        onChange={(e) => setSearchTerm(e.target.value)}
+        className="w-full md:w-1/2 p-2 mb-6 rounded bg-zinc-800 text-white placeholder:text-zinc-500"
+      />
+
+      {renderSection("🔥 Trending Now", (s) => s.mood === 'Hype')}
+      {renderSection("🧘 Chill Vibes", (s) => s.mood === 'Chill')}
+      {renderSection("🆕 New Releases", (s) => s.mood === 'New')}
+
+      {filteredSongs.length === 0 && (
+        <p className="text-zinc-400 italic">No songs found. Try a different keyword 🎵</p>
       )}
     </div>
   );

@@ -10,20 +10,21 @@ const Login = () => {
   };
 
   return (
-    <div className="min-h-screen bg-zinc-900 flex flex-col justify-center items-center text-white">
-      <h2 className="text-3xl font-bold mb-4">Welcome to Melodify 🎧</h2>
+    <div className="min-h-screen bg-zinc-950 flex flex-col justify-center items-center text-white px-4">
+      <h1 className="text-4xl font-bold mb-2">Melodify 🎶</h1>
+      <p className="text-zinc-400 mb-6 text-sm">Discover. Stream. Vibe.</p>
       <input
         type="text"
         placeholder="Enter your name..."
         value={username}
         onChange={(e) => setUsername(e.target.value)}
-        className="p-2 rounded bg-zinc-800 text-white placeholder:text-zinc-400"
+        className="p-3 w-full max-w-sm text-center rounded bg-zinc-800 text-white placeholder:text-zinc-500"
       />
       <button
         onClick={handleLogin}
-        className="mt-4 px-6 py-2 bg-violet-600 hover:bg-violet-700 rounded"
+        className="mt-4 px-6 py-2 bg-violet-600 hover:bg-violet-700 rounded text-sm"
       >
-        Enter
+        Enter Melodify
       </button>
     </div>
   );

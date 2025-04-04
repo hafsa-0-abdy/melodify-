@@ -1,69 +1,75 @@
-import { useEffect, useState } from 'react';
 import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
 
 const CommentSection = ({ songId }) => {
   const [comments, setComments] = useState([]);
   const [text, setText] = useState('');
-  const username = localStorage.getItem('melodifyUser') || 'Guest';
-
-  const fetchComments = () => {
-    axios
-      .get(`http://127.0.0.1:5000/songs/${songId}/comments`)
-      .then((res) => setComments(res.data))
-      .catch((err) => console.error('Fetch error:', err));
-  };
+  const username = localStorage.getItem('melodifyUser') || 'Anonymous';
+  const bottomRef = useRef(null);
 
   useEffect(() => {
-    if (songId) fetchComments();
+    if (songId) {
+      axios.get(`http://127.0.0.1:5000/songs/${songId}/comments`)
+        .then(res => setComments(res.data))
+        .catch(err => console.error("💬 Fetch error:", err));
+    }
   }, [songId]);
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
+  const handlePost = () => {
     if (!text.trim()) return;
 
-    axios
-      .post(`http://127.0.0.1:5000/songs/${songId}/comments`, {
-        username,
-        text,
-      })
-      .then(() => {
-        setText('');
-        fetchComments(); // Refresh comments
-      })
-      .catch((err) => console.error('Submit error:', err));
+    axios.post(`http://127.0.0.1:5000/songs/${songId}/comments`, {
+      username,
+      text
+    })
+    .then(() => {
+      setComments(prev => [...prev, { username, text }]);
+      setText('');
+      setTimeout(() => bottomRef.current?.scrollIntoView({ behavior: 'smooth' }), 50);
+    })
+    .catch(err => console.error("🔥 Error posting comment:", err));
+  };
+
+  const handleKeyDown = (e) => {
+    if (e.key === 'Enter' && !e.shiftKey) {
+      e.preventDefault();
+      handlePost();
+    }
   };
 
   return (
-    <div className="mt-8 w-full max-w-xl mx-auto text-white">
-      <h3 className="text-lg font-semibold mb-2">Comments 💬</h3>
+    <div className="mt-8 w-full max-w-2xl bg-zinc-800 p-4 rounded-lg shadow">
+      <h3 className="text-lg font-semibold mb-3 text-white">💬 Comments</h3>
 
-      <form onSubmit={handleSubmit} className="flex gap-2 mb-4">
+      <div className="space-y-3 max-h-64 overflow-y-auto pr-1">
+        {comments.length === 0 ? (
+          <p className="text-zinc-400 text-sm">No comments yet. Be the first!</p>
+        ) : (
+          comments.map((c, i) => (
+            <div key={i} className="bg-zinc-700 px-3 py-2 rounded text-sm">
+              <span className="font-semibold text-violet-400">{c.username}</span>: {c.text}
+            </div>
+          ))
+        )}
+        <div ref={bottomRef} />
+      </div>
+
+      <div className="flex items-center gap-2 mt-4">
         <input
+          type="text"
+          placeholder="Write a comment..."
           value={text}
           onChange={(e) => setText(e.target.value)}
-          placeholder="Leave a comment..."
-          className="flex-grow p-2 rounded bg-zinc-800 placeholder:text-zinc-400"
+          onKeyDown={handleKeyDown}
+          className="flex-1 p-2 rounded bg-zinc-900 text-white placeholder:text-zinc-500"
         />
         <button
-          type="submit"
-          className="bg-violet-600 px-4 py-2 rounded hover:bg-violet-700"
+          onClick={handlePost}
+          className="bg-violet-600 px-4 py-2 rounded text-sm hover:bg-violet-700"
         >
           Post
         </button>
-      </form>
-
-      {comments.length === 0 ? (
-        <p className="text-sm text-zinc-400">No comments yet.</p>
-      ) : (
-        <ul className="space-y-2">
-          {comments.map((c) => (
-            <li key={c.id} className="bg-zinc-800 p-2 rounded">
-              <span className="font-semibold text-sm">{c.username}</span>
-              <p className="text-sm text-zinc-300">{c.text}</p>
-            </li>
-          ))}
-        </ul>
-      )}
+      </div>
     </div>
   );
 };
